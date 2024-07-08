@@ -3,6 +3,8 @@
 const cohortName = "2404-FTB-ET-WEB-AM";
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
 
+
+
 const newPlayerForm = document.querySelector("#newPlayerForm");
 
 const modal = document.querySelector(".modal");
@@ -41,6 +43,8 @@ const fetchAllPlayers = async () => {
   }
 };
 
+// const players = fetchAllPlayers();
+
 /**
  * Fetches a single player from the API.
  * @param {number} playerId
@@ -64,9 +68,12 @@ function createNewPlayerCards(players) {
         const playerPhoto = document.createElement("img");
         playerPhoto.src = player.imageUrl;
         playerPhoto.alt = player.name;
-        playerInfo.innerText = `Name: ${player.name}, Breed: ${player.breed}, ID: ${player.id}, Status: ${player.status}`;
+        playerInfo.innerText = `Name: ${player.name}, Breed: ${player.breed}, ID: ${player.id}, Team: ${player.team}, Status: ${player.status}`;
         const singleInfoButton = document.createElement("button");
         singleInfoButton.innerText = "About Player";
+        singleInfoButton.addEventListener("click", function () {
+            renderSinglePlayer(player.id);
+        });
 
         const removeButton = document.createElement("button");
         removeButton.innerText = "Remove Player from Roster";
@@ -74,10 +81,16 @@ function createNewPlayerCards(players) {
             removePlayer(player.id);
 
         
-        })
+        });
+        playerContainer.appendChild(playerInfo);
+        playerContainer.appendChild(playerPhoto);
+        playerContainer.appendChild(singleInfoButton);
+        playerContainer.appendChild(removeButton);
         return playerContainer;
-})
+
+});
 return newPlayerCard;
+render();
 }
 
 /**
@@ -85,10 +98,25 @@ return newPlayerCard;
  * @param {Object} playerObj the player to add
  * @returns {Object} the player returned by the API
  */
-const addNewPlayer = async (playerObj) => {
+const addNewPlayer = async (playerId) => {
   try {
     // TODO
-    fetchNewPlayer(playerId).appendChild(newPlayerCard);
+    // fetchNewPlayer(playerId).appendChild(newPlayerCard);
+    const response = await fetch(
+        `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: playerName,
+            breed: playerBreed,
+          }),
+        }
+      );
+      const result = await response.json();
+      console.log(result);
   } catch (err) {
     console.error("Oops, something went wrong with adding that player!", err);
   }
@@ -99,7 +127,19 @@ const addNewPlayer = async (playerObj) => {
  * @param {number} playerId the ID of the player to remove
  */
 const removePlayer = async (playerId) => {
-  try {
+    fetch('https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players', {
+        method: 'DELETE',
+      });
+      try {
+        const response = await fetch(
+          'https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players/1',
+          {
+            method: 'DELETE',
+          }
+        );
+        const result = await response.json();
+        console.log(result);
+        
     // TODO
     
   } catch (err) {
@@ -131,6 +171,15 @@ const removePlayer = async (playerId) => {
  */
 const renderAllPlayers = (playerList) => {
  // TODO
+fetchAllPlayers(players);
+ createNewPlayerCards(players);
+render();
+
+const mainElement = document.querySelector("main");
+mainElement.innerHTML = "";
+
+const playerCards = createNewPlayerCards(players);
+playerCards.forEach(card => mainElement.appendChild(card));
 
  // when you add a event handler to the buttons, you need to pass an id of the player
  // to the function renderSinglePlayer or removePlayer
@@ -160,6 +209,8 @@ const renderAllPlayers = (playerList) => {
  */
 const renderSinglePlayer = (player) => {
   // TODO
+  createNewPlayerCards(player[Math.floor(Math.random()*players.length)]);
+  render();
 };
 
 /**
@@ -177,8 +228,12 @@ const renderNewPlayerForm = () => {
             breed: playerBreed.value,
             id: playerId.value,
             status: playerStatus.value,
+            team: playerTeam.value
+
         };
-    })
+        const result = await addNewPlayer(newPlayer);
+        console.log(result);
+    });
     
   } catch (err) {
     console.error("Uh oh, trouble rendering the new player form!", err);
