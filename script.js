@@ -69,28 +69,26 @@ function createNewPlayerCards(players) {
         playerPhoto.src = player.imageUrl;
         playerPhoto.alt = player.name;
         playerInfo.innerText = `Name: ${player.name}, Breed: ${player.breed}, ID: ${player.id}, Team: ${player.team}, Status: ${player.status}`;
-        const singleInfoButton = document.createElement("button");
-        singleInfoButton.innerText = "About Player";
-        singleInfoButton.addEventListener("click", function () {
-            renderSinglePlayer(player.id);
+        const addButton = document.createElement("button");
+        addButton.innerText = "About Player";
+        addButton.addEventListener("click", function () {
+            addNewPlayer(player.id);
         });
 
         const removeButton = document.createElement("button");
         removeButton.innerText = "Remove Player from Roster";
-        removeButton.addEventListener("click", function () {
-            removePlayer(player.id);
-
-        
+        removeButton.addEventListener("click", async function () {
+                await removePlayer(player.id);
         });
         playerContainer.appendChild(playerInfo);
         playerContainer.appendChild(playerPhoto);
-        playerContainer.appendChild(singleInfoButton);
+        playerContainer.appendChild(addButton);
         playerContainer.appendChild(removeButton);
         return playerContainer;
 
 });
-return newPlayerCard;
-render();
+ 
+container.replaceChildren(...newPlayerCard);
 }
 
 /**
@@ -127,9 +125,9 @@ const addNewPlayer = async (playerId) => {
  * @param {number} playerId the ID of the player to remove
  */
 const removePlayer = async (playerId) => {
-    fetch('https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players', {
-        method: 'DELETE',
-      });
+    // fetch('https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players', {
+    //     method: 'DELETE',
+    //   });
       try {
         const response = await fetch(
           'https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players/1',
@@ -171,7 +169,7 @@ const removePlayer = async (playerId) => {
  */
 const renderAllPlayers = (playerList) => {
  // TODO
-fetchAllPlayers(players);
+fetchAllPlayers();
  createNewPlayerCards(players);
 render();
 
@@ -233,6 +231,7 @@ const renderNewPlayerForm = () => {
         };
         const result = await addNewPlayer(newPlayer);
         console.log(result);
+        renderAllPlayers();
     });
     
   } catch (err) {
@@ -248,8 +247,8 @@ const renderNewPlayerForm = () => {
  */
 const init = async () => {
   const players = await fetchAllPlayers();
-  const player1 = await fetchSinglePlayer(players[0].id);
-  console.log(player1);
+//   const player1 = await fetchSinglePlayer(players[0].id);
+  console.log(players);
   renderAllPlayers(players);
 
   renderNewPlayerForm();
