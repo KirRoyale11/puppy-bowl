@@ -2,24 +2,25 @@
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
 const cohortName = "2404-FTB-ET-WEB-AM";
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
+// const pic = document.querySelector("img");
+// pic.style.height = 100;
+// pic.style.width = 100;
 
-
-
-const newPlayerForm = document.querySelector("#newPlayerForm");
+const newPlayerForm = document.querySelector("#new-player-form");
 
 const modal = document.querySelector(".modal");
 const modalContent = document.querySelector(".modal-content");
 const closeModal = document.querySelector("#close-modal");
 
-modal.addEventListener("click", function(e){
+modal.addEventListener("click", function (e) {
   // closes modal when you click outside the content area of the modal
-  console.log(e.target.classList)
-  if(!e.target.classList.contains("modal-content") ){
-    modal.classList.remove("modal-open")
+  console.log(e.target.classList);
+  if (!e.target.classList.contains("modal-content")) {
+    modal.classList.remove("modal-open");
     modalContent.classList.remove("modal-content-open");
-    modalContent.innerHTML = ''
+    modalContent.innerHTML = "";
   }
-})
+});
 
 /**
  * Fetches all players from the API.
@@ -31,15 +32,16 @@ const fetchAllPlayers = async () => {
     /* Remember, if you're using the modal, when you create the details button,
     in th event handler, create functionality that adds the class 'modal-open' to the modal var and 'modal-content-open' to the
     modalContent var */
-    const response = await fetch ("https://fsa-puppy-bowl.herokuapp.com/api/2404-FTB-ET-WEB-AM/players");
+    const response = await fetch(
+      "https://fsa-puppy-bowl.herokuapp.com/api/2404-FTB-ET-WEB-AM/players"
+    );
 
     const result = await response.json();
 
     // console.log(result);
     return result.data.players;
-
-  }catch(err){
-     console.error("Uh oh, trouble fetching players!", err);
+  } catch (err) {
+    console.error("Uh oh, trouble fetching players!", err);
   }
 };
 
@@ -53,7 +55,9 @@ const fetchAllPlayers = async () => {
 const fetchSinglePlayer = async (playerId) => {
   try {
     // TODO
-    const response = await fetch (`https://fsa-puppy-bowl.herokuapp.com/api/2404-FTB-ET-WEB-AM/players/${playerId}`)
+    const response = await fetch(
+      `https://fsa-puppy-bowl.herokuapp.com/api/2404-FTB-ET-WEB-AM/players/${playerId}`
+    );
     const result = await response.json();
     return result.data.player;
   } catch (err) {
@@ -62,33 +66,32 @@ const fetchSinglePlayer = async (playerId) => {
 };
 
 function createNewPlayerCards(players) {
-    const newPlayerCard = players.map((player) => {
-        const playerContainer = document.createElement("div");
-        const playerInfo = document.createElement("p");
-        const playerPhoto = document.createElement("img");
-        playerPhoto.src = player.imageUrl;
-        playerPhoto.alt = player.name;
-        playerInfo.innerText = `Name: ${player.name}, Breed: ${player.breed}, ID: ${player.id}, Team: ${player.team}, Status: ${player.status}`;
-        const addButton = document.createElement("button");
-        addButton.innerText = "About Player";
-        addButton.addEventListener("click", function () {
-            addNewPlayer(player.id);
-        });
+  const newPlayerCard = players.map((player) => {
+    const playerContainer = document.createElement("div");
+    const playerInfo = document.createElement("p");
+    const playerPhoto = document.createElement("img");
+    playerPhoto.src = player.imageUrl;
+    playerPhoto.alt = player.name;
+    playerInfo.innerText = `Name: ${player.name}, Breed: ${player.breed}, ID: ${player.id}, Team: ${player.team}, Status: ${player.status}`;
+    const addButton = document.createElement("button");
+    addButton.innerText = "About Player";
+    addButton.addEventListener("click", function () {
+      addNewPlayer(player.id);
+    });
 
-        const removeButton = document.createElement("button");
-        removeButton.innerText = "Remove Player from Roster";
-        removeButton.addEventListener("click", async function () {
-                await removePlayer(player.id);
-        });
-        playerContainer.appendChild(playerInfo);
-        playerContainer.appendChild(playerPhoto);
-        playerContainer.appendChild(addButton);
-        playerContainer.appendChild(removeButton);
-        return playerContainer;
-
-});
- 
-container.replaceChildren(...newPlayerCard);
+    const removeButton = document.createElement("button");
+    removeButton.innerText = "Remove Player from Roster";
+    removeButton.addEventListener("click", async function () {
+      await removePlayer(player.id);
+    });
+    playerContainer.appendChild(playerInfo);
+    playerContainer.appendChild(playerPhoto);
+    playerContainer.appendChild(addButton);
+    playerContainer.appendChild(removeButton);
+    return playerContainer;
+  });
+const container = document.querySelector("main");
+  container.replaceChildren(...newPlayerCard);
 }
 
 /**
@@ -96,25 +99,25 @@ container.replaceChildren(...newPlayerCard);
  * @param {Object} playerObj the player to add
  * @returns {Object} the player returned by the API
  */
-const addNewPlayer = async (playerId) => {
+const addNewPlayer = async (player) => {
   try {
     // TODO
     // fetchNewPlayer(playerId).appendChild(newPlayerCard);
     const response = await fetch(
-        `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: playerName,
-            breed: playerBreed,
-          }),
-        }
-      );
-      const result = await response.json();
-      console.log(result);
+      `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/players`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: playerName.name,
+          breed: playerBreed.breed,
+        }),
+      }
+    );
+    const result = await response.json();
+    console.log(result);
   } catch (err) {
     console.error("Oops, something went wrong with adding that player!", err);
   }
@@ -125,21 +128,20 @@ const addNewPlayer = async (playerId) => {
  * @param {number} playerId the ID of the player to remove
  */
 const removePlayer = async (playerId) => {
-    // fetch('https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players', {
-    //     method: 'DELETE',
-    //   });
-      try {
-        const response = await fetch(
-          'https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players/1',
-          {
-            method: 'DELETE',
-          }
-        );
-        const result = await response.json();
-        console.log(result);
-        
+  // fetch('https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players', {
+  //     method: 'DELETE',
+  //   });
+  try {
+    const response = await fetch(
+      "https://fsa-puppy-bowl.herokuapp.com/api/COHORT-NAME/players/1",
+      {
+        method: "DELETE",
+      }
+    );
+    const result = await response.json();
+    console.log(result);
+
     // TODO
-    
   } catch (err) {
     console.error(
       `Whoops, trouble removing player #${playerId} from the roster!`,
@@ -168,20 +170,20 @@ const removePlayer = async (playerId) => {
  * @param {Object[]} playerList - an array of player objects
  */
 const renderAllPlayers = (playerList) => {
- // TODO
-fetchAllPlayers();
- createNewPlayerCards(players);
-render();
+  // TODO
+  
+  createNewPlayerCards(playerList);
+//   render();
 
-const mainElement = document.querySelector("main");
-mainElement.innerHTML = "";
+//   const mainElement = document.querySelector("main");
+//   mainElement.innerHTML = "";
 
-const playerCards = createNewPlayerCards(players);
-playerCards.forEach(card => mainElement.appendChild(card));
+//   const playerCards = createNewPlayerCards(players);
+//   playerCards.forEach((card) => mainElement.appendChild(card));
 
- // when you add a event handler to the buttons, you need to pass an id of the player
- // to the function renderSinglePlayer or removePlayer
- /*
+  // when you add a event handler to the buttons, you need to pass an id of the player
+  // to the function renderSinglePlayer or removePlayer
+  /*
      ...your code(player=>{
       // more code...
         deleteButton.addEventListener("click", function(){
@@ -207,7 +209,7 @@ playerCards.forEach(card => mainElement.appendChild(card));
  */
 const renderSinglePlayer = (player) => {
   // TODO
-  createNewPlayerCards(player[Math.floor(Math.random()*players.length)]);
+  createNewPlayerCards(player[Math.floor(Math.random() * players.length)]);
   render();
 };
 
@@ -219,40 +221,53 @@ const renderSinglePlayer = (player) => {
 const renderNewPlayerForm = () => {
   try {
     // TODO
-    newPlayerForm.addEventListener("submit", async function(e) {
-        e.preventDefault();
-        const newPlayer = {
-            name: playerName.value,
-            breed: playerBreed.value,
-            id: playerId.value,
-            status: playerStatus.value,
-            team: playerTeam.value
+const playerName = document.createElement("input");
+playerName.name = "Name";
+const playerBreed = document.createElement("input");
+playerBreed.breed = "Breed";
+const playerId = document.createElement("input");
+playerId.id= "ID";
+const playerStatus = document.createElement("input");
+playerStatus.status = "Status;"
+const playerTeam = document.createElement("input");
+playerTeam.team = "Team";
 
-        };
-        const result = await addNewPlayer(newPlayer);
-        console.log(result);
-        renderAllPlayers();
+
+// playerName.setAttribute("name", "Name");
+    newPlayerForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const newPlayer = {
+        name: playerName.value,
+        breed: playerBreed.value,
+        id: playerId.value,
+        status: playerStatus.value,
+        team: playerTeam.value,
+      };
+      const result = await addNewPlayer(newPlayer);
+      console.log(result);
+      renderAllPlayers();
+      
     });
-    
   } catch (err) {
     console.error("Uh oh, trouble rendering the new player form!", err);
   }
 };
-
-
-
 
 /**
  * Initializes the app by fetching all players and rendering them to the DOM.
  */
 const init = async () => {
   const players = await fetchAllPlayers();
-//   const player1 = await fetchSinglePlayer(players[0].id);
+  //   const player1 = await fetchSinglePlayer(players[0].id);
   console.log(players);
-  renderAllPlayers(players);
+
+  try {
+    renderAllPlayers(players);
+  } catch(err) {
+    console.error("Init error! Ruff.", err);
+  }
 
   renderNewPlayerForm();
 };
-
 
 init();
